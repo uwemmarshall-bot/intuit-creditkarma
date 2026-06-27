@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Intuit Credit Karma</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green: #00A650;
+  --green-dark: #007A3D;
+  --green-light: #E8F5EE;
+  --text: #1a1a1a;
+  --text-muted: #6b7280;
+  --text-light: #9ca3af;
+  --border: #e5e7eb;
+  --bg: #f3f4f6;
+  --white: #ffffff;
+  --red: #ef4444;
+  --red-soft: #dc2626;
+  --yellow: #f59e0b;
+  --blue: #1d4ed8;
+  --shadow: 0 1px 6px rgba(0,0,0,0.08), 0 2px 16px rgba(0,0,0,0.04);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+  background: #e8ede8;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── APP SHELL ── */
+.app-shell {
+  max-width: 430px;
+  margin: 0 auto;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+@media (min-width: 600px) {
+  body { display: flex; align-items: flex-start; justify-content: center; padding: 24px 0 0; }
+  .app-shell {
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.18);
+    min-height: calc(100vh - 24px);
+  }
+}
+
+/* ── WELCOME SPLASH ── */
+#splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--green);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+  animation: splashFade 0.5s ease 6.5s forwards;
+}
+@keyframes splashFade {
+  to { opacity: 0; pointer-events: none; }
+}
+.splash-logo {
+  width: 72px; height: 72px; background: white; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; font-weight: 900; color: var(--green); letter-spacing: -2px;
+}
+.splash-brand { color: white; text-align: center; }
+.splash-brand .intuit { font-size: 13px; font-weight: 700; letter-spacing: 1px; opacity: 0.85; }
+.splash-brand .karma { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+.splash-welcome {
+  color: white; font-size: 22px; font-weight: 700; margin-top: 20px;
+  opacity: 0;
+  animation: welcomeIn 0.6s ease 0.4s forwards;
+}
+@keyframes welcomeIn { to { opacity: 1; } }
+.splash-sub { color: rgba(255,255,255,0.75); font-size: 14px; }
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--white);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 38px; height: 38px; background: var(--green);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 900; font-size: 16px; letter-spacing: -1px;
+}
+.logo-text .brand-intuit { font-size: 10px; font-weight: 800; color: #333; letter-spacing: 0.8px; text-transform: uppercase; line-height: 1; }
+.logo-text .brand-karma { font-size: 18px; font-weight: 800; color: var(--green); line-height: 1.1; }
+.topbar-right { display: flex; gap: 18px; align-items: center; }
+.icon-btn { background: none; border: none; cursor: pointer; font-size: 22px; position: relative; }
+.notif-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; position: absolute; top: 1px; right: 0; border: 2px solid white; }
+
+/* ── SCREENS ── */
+.screen { display: none; flex: 1; overflow-y: auto; }
+.screen.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--white); border-radius: 14px;
+  margin: 14px 16px; padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+/* ── BUTTONS ── */
+.btn-primary {
+  display: block; width: 100%; padding: 15px;
+  background: var(--green); color: white;
+  border: none; border-radius: 50px; font-size: 15px; font-weight: 700;
+  cursor: pointer; text-align: center;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-primary:active { transform: scale(0.98); }
+.btn-outline {
+  display: block; width: 100%; padding: 14px;
+  background: transparent; color: var(--green);
+  border: 2px solid var(--green); border-radius: 50px; font-size: 15px; font-weight: 700;
+  cursor: pointer; text-align: center; transition: all 0.2s;
+}
+.btn-text { background: none; border: none; color: var(--green); font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; padding: 10px 0; display: block; width: 100%; }
+
+/* ═══════════════════════════════════
+   DUAL GAUGE — THE MAIN HERO SECTION
+   ═══════════════════════════════════ */
+.scores-hero {
+  background: var(--white);
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.scores-hero-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 28px;
+}
+.scores-hero-title { font-size: 24px; font-weight: 900; color: var(--text); }
+.scores-hero-link { font-size: 15px; font-weight: 600; color: var(--green); cursor: pointer; }
+
+.dual-gauges {
+  display: flex; justify-content: space-around; align-items: flex-start; gap: 12px;
+}
+.gauge-col {
+  display: flex; flex-direction: column; align-items: center;
+  flex: 1;
+}
+
+/* SVG Gauge */
+.gauge-svg-container {
+  position: relative;
+  width: 160px; height: 100px;
+}
+.gauge-svg-container svg {
+  width: 160px; height: 100px; display: block;
+}
+.gauge-score-overlay {
+  position: absolute;
+  bottom: 2px; left: 50%; transform: translateX(-50%);
+  font-size: 40px; font-weight: 900; color: var(--text);
+  line-height: 1; white-space: nowrap;
+  pointer-events: none;
+}
+
+.gauge-bureau-name {
+  font-size: 16px; font-weight: 700; color: var(--text);
+  margin-top: 12px; text-align: center;
+}
+.gauge-pts-change {
+  font-size: 14px; font-weight: 600; color: var(--red-soft);
+  margin-top: 4px; text-align: center;
+}
+.gauge-status {
+  font-size: 14px; font-weight: 700; color: var(--green);
+  margin-top: 5px; text-align: center;
+}
+.gauge-checked-label {
+  font-size: 12px; color: var(--text-light);
+  margin-top: 3px; text-align: center;
+}
+
+.scores-hero-footer {
+  margin-top: 22px; padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 13px; color: var(--text-light);
+}
+
+/* ── DIVIDER ── */
+.divider { height: 8px; background: var(--bg); }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 22px 18px 8px;
+}
+.section-title { font-size: 20px; font-weight: 900; color: var(--text); }
+.section-link { font-size: 14px; color: var(--green); font-weight: 600; cursor: pointer; }
+
+/* ── FACTOR ROWS ── */
+.factor-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 15px 0; border-bottom: 1px solid var(--border);
+}
+.factor-row:last-child { border-bottom: none; }
+.factor-left { display: flex; align-items: center; gap: 12px; }
+.factor-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.factor-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.factor-sub { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.factor-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+.badge-good { background: #dcfce7; color: #166534; }
+.badge-fair { background: #fef3c7; color: #92400e; }
+.badge-needs { background: #fee2e2; color: #991b1b; }
+
+/* ── CREDIT KARMA MONEY ROW ── */
+.ck-money-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px; background: var(--white);
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.ck-money-left { display: flex; align-items: center; gap: 12px; }
+.ck-money-icon { font-size: 24px; }
+.ck-money-label { font-size: 16px; font-weight: 700; color: var(--text); }
+.ck-money-link { font-size: 15px; font-weight: 600; color: var(--green); cursor: pointer; }
+
+/* ── APPROVAL ODDS CARD ── */
+.odds-card {
+  background: var(--white); border-radius: 14px;
+  margin: 14px 16px; padding: 22px;
+  box-shadow: var(--shadow);
+}
+.odds-title { font-size: 20px; font-weight: 900; color: var(--text); line-height: 1.3; }
+.odds-title span { color: var(--green); }
+.odds-sub { font-size: 14px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+.odds-link { font-size: 13px; color: var(--text-light); text-decoration: underline; margin-top: 10px; cursor: pointer; display: block; }
+.odds-stats {
+  display: flex; margin-top: 18px;
+  border-top: 1px solid var(--border); padding-top: 16px;
+}
+.odds-stat { flex: 1; text-align: center; }
+.odds-stat + .odds-stat { border-left: 1px solid var(--border); }
+.odds-stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; line-height: 1.4; }
+.odds-stat-val { font-size: 18px; font-weight: 900; color: var(--text); }
+
+/* ── APPROVAL ODDS MINI WIDGET ── */
+.approval-widget {
+  background: var(--white); border-radius: 14px;
+  margin: 14px 16px; padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 16px;
+}
+.approval-text-block { flex: 1; }
+.approval-title { font-size: 19px; font-weight: 900; color: var(--text); line-height: 1.3; }
+.approval-sub { font-size: 13px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+.approval-legal { font-size: 12px; color: var(--text-light); text-decoration: underline; margin-top: 10px; cursor: pointer; display: block; }
+.approval-gauge-icon { flex-shrink: 0; }
+
+/* ── CREDIT CARDS NAV ROW ── */
+.cc-nav-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px; background: var(--white);
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  cursor: pointer; margin-top: 8px;
+}
+.cc-nav-left { display: flex; align-items: center; gap: 14px; }
+.cc-card-icon {
+  width: 44px; height: 32px; background: linear-gradient(135deg, #e91e8c, #c2185b);
+  border-radius: 6px; position: relative; flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(233,30,140,0.3);
+}
+.cc-card-icon::before {
+  content: ''; position: absolute; top: 10px; left: 0; right: 0;
+  height: 8px; background: rgba(0,0,0,0.15);
+}
+.cc-card-icon::after {
+  content: ''; position: absolute; bottom: 7px; left: 7px;
+  width: 18px; height: 5px;
+  background: rgba(255,255,255,0.4); border-radius: 2px;
+}
+.cc-nav-label { font-size: 17px; font-weight: 700; color: var(--text); }
+.cc-nav-arrow { font-size: 22px; color: var(--text-light); }
+
+/* ── OFFER CARDS ── */
+.offer-card {
+  background: var(--white); border-radius: 14px; margin: 14px 16px;
+  overflow: hidden; box-shadow: var(--shadow);
+}
+.offer-header {
+  background: #111827; color: white; padding: 12px 18px;
+  font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-align: center;
+}
+.offer-body { padding: 18px; }
+.offer-badge {
+  display: inline-block; background: var(--yellow); color: white;
+  font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 5px;
+  margin-bottom: 12px; letter-spacing: 0.5px;
+}
+.offer-rate { font-size: 28px; font-weight: 900; color: var(--text); }
+.offer-rate-sub { font-size: 12px; color: var(--text-muted); }
+.offer-lender { font-size: 17px; font-weight: 800; color: var(--blue); }
+.offer-stars { color: var(--yellow); font-size: 13px; margin-top: 2px; }
+.offer-stats {
+  display: flex; margin: 16px 0;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+.offer-stat { flex: 1; text-align: center; }
+.offer-stat + .offer-stat { border-left: 1px solid var(--border); }
+.offer-stat-val { font-size: 16px; font-weight: 800; color: var(--text); }
+.offer-stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+.offer-approval {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--green-light); border-radius: 10px; padding: 12px 14px; margin: 14px 0;
+}
+.offer-approval-text { font-size: 13px; color: var(--text); }
+.offer-approval-text strong { color: var(--green-dark); }
+
+/* ── TODAY MINI SCORE ── */
+.mini-score-card {
+  background: var(--white); border-radius: 14px;
+  margin: 14px 16px; padding: 18px 20px;
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+}
+.mini-score-left .ms-label { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.3px; margin-bottom: 8px; }
+.mini-scores { display: flex; gap: 32px; }
+.ms-item .ms-bureau { font-size: 12px; color: var(--text-light); margin-bottom: 2px; }
+.ms-item .ms-val { font-size: 28px; font-weight: 900; color: var(--text); line-height: 1; }
+.ms-item .ms-change { font-size: 12px; color: var(--green); font-weight: 600; margin-top: 2px; }
+.mini-score-arrow { font-size: 24px; color: var(--text-light); }
+
+/* ── PROMO BANNER ── */
+.promo-banner {
+  background: linear-gradient(135deg, #004d26 0%, #00A650 100%);
+  border-radius: 14px; margin: 14px 16px; padding: 22px;
+  color: white; box-shadow: var(--shadow);
+}
+.promo-pre { font-size: 11px; font-weight: 800; opacity: 0.8; letter-spacing: 1px; margin-bottom: 8px; }
+.promo-banner h3 { font-size: 18px; font-weight: 900; line-height: 1.3; }
+.promo-banner p { font-size: 13px; opacity: 0.85; margin-top: 8px; line-height: 1.5; }
+.promo-btn { background: white; color: var(--green); border: none; border-radius: 50px; padding: 11px 22px; font-weight: 700; font-size: 14px; margin-top: 16px; cursor: pointer; }
+
+/* ── CREDIT CARD VISUAL ── */
+.cc-visual {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  border-radius: 16px; margin: 14px 16px; padding: 24px 22px;
+  color: white; position: relative; overflow: hidden; min-height: 155px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+.cc-visual::before { content: ''; position: absolute; top: -30px; right: -30px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+.cc-visual::after { content: ''; position: absolute; bottom: -45px; right: 25px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,0.03); }
+.cc-bank { font-size: 12px; font-weight: 700; opacity: 0.65; letter-spacing: 1.5px; }
+.cc-name { font-size: 19px; font-weight: 800; margin-top: 6px; }
+.cc-chip { font-size: 32px; margin: 16px 0 10px; }
+.cc-number { font-size: 14px; letter-spacing: 2.5px; opacity: 0.75; }
+.cc-info { display: flex; justify-content: space-between; margin-top: 12px; }
+.cc-info-label { font-size: 9px; opacity: 0.55; text-transform: uppercase; letter-spacing: 0.5px; }
+.cc-info-val { font-size: 14px; font-weight: 700; margin-top: 2px; }
+
+/* ── TABS ── */
+.tabs { display: flex; background: var(--white); border-bottom: 1px solid var(--border); }
+.tab { flex: 1; padding: 16px 8px; text-align: center; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; }
+.tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+/* ── ICON GRID ── */
+.icon-grid { display: flex; gap: 10px; padding: 16px; overflow-x: auto; }
+.icon-item { display: flex; flex-direction: column; align-items: center; gap: 7px; flex-shrink: 0; }
+.icon-circle { width: 58px; height: 58px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.icon-label { font-size: 11px; color: var(--text); font-weight: 600; text-align: center; max-width: 62px; line-height: 1.3; }
+
+/* ── PRODUCT ROWS ── */
+.product-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 0; border-bottom: 1px solid var(--border);
+}
+.product-row:last-child { border-bottom: none; }
+.product-icon { font-size: 28px; flex-shrink: 0; }
+.product-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.product-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.product-arrow { margin-left: auto; color: var(--text-light); font-size: 20px; }
+
+/* ── TAGS ── */
+.tag-row { display: flex; gap: 8px; padding: 12px 16px; flex-wrap: wrap; }
+.tag { background: var(--white); border: 1.5px solid var(--border); border-radius: 50px; padding: 8px 16px; font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; }
+.tag:hover { border-color: var(--green); color: var(--green); }
+
+/* ── MONEY SCREEN ── */
+.money-balance { text-align: center; padding: 28px 18px 18px; background: var(--white); margin: 14px 16px; border-radius: 14px; box-shadow: var(--shadow); }
+.money-balance .bal-label { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; }
+.money-balance .bal-amount { font-size: 40px; font-weight: 900; color: var(--text); margin: 6px 0 2px; }
+.money-balance .bal-acct { font-size: 13px; color: var(--text-light); }
+.money-actions { display: flex; gap: 14px; justify-content: center; margin-top: 18px; }
+.money-action-btn { display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--green-light); border: none; border-radius: 12px; padding: 14px 22px; cursor: pointer; }
+.money-action-icon { font-size: 22px; }
+.money-action-label { font-size: 12px; font-weight: 700; color: var(--green); }
+
+/* ── TXN ROWS ── */
+.txn-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.txn-row:last-child { border-bottom: none; }
+.txn-left { display: flex; align-items: center; gap: 12px; }
+.txn-icon { width: 42px; height: 42px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.txn-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.txn-date { font-size: 12px; color: var(--text-light); margin-top: 1px; }
+.txn-amount { font-size: 15px; font-weight: 700; }
+.txn-debit { color: var(--text); }
+.txn-credit { color: var(--green); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: sticky; bottom: 0; width: 100%;
+  background: var(--white); border-top: 1px solid var(--border);
+  display: flex; z-index: 200; flex-shrink: 0;
+}
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 4px 8px; cursor: pointer; border: none; background: none; transition: all 0.15s; }
+.nav-icon { font-size: 22px; margin-bottom: 3px; }
+.nav-label { font-size: 11px; color: var(--text-light); font-weight: 500; }
+.nav-item.active .nav-label { color: var(--green); font-weight: 700; }
+
+/* ── GREETING LINE ── */
+.greeting { padding: 24px 18px 6px; }
+.greeting-name { font-size: 24px; font-weight: 900; color: var(--text); }
+.greeting-sub { font-size: 14px; color: var(--text-muted); margin-top: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ -->
+<!-- WELCOME SPLASH SCREEN                  -->
+<!-- ══════════════════════════════════════ -->
+<div id="splash">
+  <div class="splash-logo">ck</div>
+  <div class="splash-brand">
+    <div class="intuit">INTUIT</div>
+    <div class="karma">creditkarma</div>
+  </div>
+  <div class="splash-welcome" id="splash-name">Welcome back, Shawn Harvey! 👋</div>
+  <div class="splash-sub" style="opacity:0; animation: welcomeIn 0.6s ease 0.9s forwards;">Your financial health is loading…</div>
+</div>
+
+<div class="app-shell">
+
+<!-- ══════════════════════════════════════ -->
+<!-- TOP BAR                                -->
+<!-- ══════════════════════════════════════ -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">ck</div>
+    <div class="logo-text">
+      <div class="brand-intuit">INTUIT</div>
+      <div class="brand-karma">creditkarma</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" onclick="alert('Notifications')">🔔<span class="notif-dot"></span></button>
+    <button class="icon-btn" onclick="alert('Menu')">☰</button>
+  </div>
+</div>
+<!-- ══════════════════════════════════════ -->
+<!-- BOTTOM NAV                             -->
+<!-- ══════════════════════════════════════ -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="nav-today" onclick="switchTab('today')">
+    <div class="nav-icon">📋</div><div class="nav-label">Today</div>
+  </button>
+  <button class="nav-item" id="nav-credit" onclick="switchTab('credit')">
+    <div class="nav-icon">📈</div><div class="nav-label">Credit</div>
+  </button>
+  <button class="nav-item" id="nav-cards" onclick="switchTab('cards')">
+    <div class="nav-icon">💳</div><div class="nav-label">Cards</div>
+  </button>
+  <button class="nav-item" id="nav-loans" onclick="switchTab('loans')">
+    <div class="nav-icon">💰</div><div class="nav-label">Loans</div>
+  </button>
+  <button class="nav-item" id="nav-money" onclick="switchTab('money')">
+    <div class="nav-icon">🏦</div><div class="nav-label">Money</div>
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- TODAY SCREEN                           -->
+<!-- ══════════════════════════════════════ -->
+<div class="screen active" id="screen-today">
+
+  <div class="greeting">
+    <div class="greeting-name">Today</div>
+    <div class="greeting-sub">Saturday, June 28, 2025</div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       DUAL GAUGES — ALWAYS VISIBLE
+       ═══════════════════════════════════ -->
+  <div class="scores-hero">
+    <div class="scores-hero-header">
+      <div></div>
+      <div class="scores-hero-link">Personalize</div>
+    </div>
+
+    <div class="dual-gauges">
+
+      <!-- TransUnion Gauge -->
+      <div class="gauge-col">
+        <div class="gauge-svg-container">
+          <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+            <!-- Track -->
+            <path d="M 18 90 A 64 64 0 0 1 142 90"
+              fill="none" stroke="#e5e7eb" stroke-width="14" stroke-linecap="round"/>
+            <!-- Fill — 802/850 ≈ 94% = dashoffset ~12 of 201 -->
+            <path d="M 18 90 A 64 64 0 0 1 142 90"
+              fill="none" stroke="#00A650" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="201" stroke-dashoffset="14"/>
+          </svg>
+          <div class="gauge-score-overlay">795</div>
+        </div>
+        <div class="gauge-bureau-name">TransUnion</div>
+        <div class="gauge-pts-change">- 12 pts</div>
+        <div class="gauge-status">● Looks Good</div>
+        <div class="gauge-checked-label">Checked daily</div>
+      </div>
+
+      <!-- Equifax Gauge -->
+      <div class="gauge-col">
+        <div class="gauge-svg-container">
+          <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+            <!-- Track -->
+            <path d="M 18 90 A 64 64 0 0 1 142 90"
+              fill="none" stroke="#e5e7eb" stroke-width="14" stroke-linecap="round"/>
+            <!-- Fill — 802/850 ≈ same -->
+            <path d="M 18 90 A 64 64 0 0 1 142 90"
+              fill="none" stroke="#00A650" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="201" stroke-dashoffset="14"/>
+          </svg>
+          <div class="gauge-score-overlay">793</div>
+        </div>
+        <div class="gauge-bureau-name">Equifax</div>
+        <div class="gauge-pts-change">- 8 pts</div>
+        <div class="gauge-status">● Looks Good</div>
+        <div class="gauge-checked-label">Checked daily</div>
+      </div>
+
+    </div><!-- end dual-gauges -->
+
+    <div class="scores-hero-footer">
+      Scores checked daily with VantageScore 3.0 &nbsp;ℹ️
+    </div>
+  </div><!-- end scores-hero -->
+
+  <!-- Credit Karma Money row -->
+  <div class="ck-money-row">
+    <div class="ck-money-left">
+      <span class="ck-money-icon">💵</span>
+      <span class="ck-money-label">Credit Karma Money™</span>
+    </div>
+    <span class="ck-money-link">Learn more</span>
+  </div>
+
+  <div style="height:10px;"></div>
+
+  <!-- Approval Odds widget -->
+  <div class="approval-widget">
+    <div class="approval-text-block">
+      <div class="approval-title">See your Approval Odds*</div>
+      <div class="approval-sub">Understand your chances of approval* and apply with more confidence.</div>
+      <a class="approval-legal">Legal Disclosure</a>
+    </div>
+    <div class="approval-gauge-icon">
+      <svg viewBox="0 0 90 60" width="90" height="60" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="og" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#bbf7d0"/>
+            <stop offset="50%" stop-color="#4ade80"/>
+            <stop offset="100%" stop-color="#00A650"/>
+          </linearGradient>
+        </defs>
+        <path d="M 10 52 A 38 38 0 0 1 80 52" fill="none" stroke="url(#og)" stroke-width="9" stroke-linecap="round"/>
+        <line x1="45" y1="52" x2="24" y2="24" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="45" cy="52" r="4" fill="#1a1a1a"/>
+        <text x="66" y="20" font-size="9" fill="#00A650" font-weight="900">✦</text>
+        <text x="74" y="10" font-size="7" fill="#00A650">✦</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Credit Cards nav row -->
+  <div class="cc-nav-row" onclick="switchTab('cards')">
+    <div class="cc-nav-left">
+      <div class="cc-card-icon"></div>
+      <span class="cc-nav-label">Credit cards</span>
+    </div>
+    <span class="cc-nav-arrow">›</span>
+  </div>
+
+  <div style="height:12px;"></div>
+
+  <!-- Outstanding Odds card -->
+  <div class="odds-card">
+    <div class="odds-title">You have <span>Outstanding Approval Odds*</span> for 4 offers!</div>
+    <div class="odds-sub">Outstanding Approval Odds is our highest level of confidence.</div>
+    <a class="odds-link">Legal Disclosure</a>
+    <div style="margin-top:16px;">
+      <div class="product-row">
+        <div class="product-icon">💳</div>
+        <div>
+          <div class="product-name">Credit cards</div>
+          <div class="product-sub">2 offers</div>
+        </div>
+        <div class="product-arrow">›</div>
+      </div>
+      <div class="product-row">
+        <div class="product-icon">💰</div>
+        <div>
+          <div class="product-name">Personal loans</div>
+          <div class="product-sub">3 offers</div>
+        </div>
+        <div class="product-arrow">›</div>
+      </div>
+      <div class="product-row">
+        <div class="product-icon">🚗</div>
+        <div>
+          <div class="product-name">Auto loans</div>
+          <div class="product-sub">2 offers</div>
+        </div>
+        <div class="product-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Promo Banner -->
+  <div class="promo-banner">
+    <div class="promo-pre">💸 CREDIT KARMA MONEY™</div>
+    <h3>Earn up to 4.85% APY on your savings</h3>
+    <p>No fees, no minimums, and FDIC-insured up to $5M through partner banks.</p>
+    <button class="promo-btn">Learn more</button>
+  </div>
+
+  <!-- Personal Loans teaser -->
+  <div class="section-header">
+    <div class="section-title">Personal Loans</div>
+    <div class="section-link">See all</div>
+  </div>
+  <div class="card">
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:12px;">Based on your credit profile, you may qualify for:</p>
+    <ul style="font-size:14px; color:var(--text); line-height:2.2; padding-left:18px;">
+      <li>Loans up to <strong>$35,000</strong></li>
+      <li>One monthly payment — easier to budget</li>
+      <li>Lower rates than most credit cards</li>
+    </ul>
+    <button class="btn-outline" style="margin-top:16px;" onclick="switchTab('loans')">Check out offers</button>
+  </div>
+
+  <!-- Personal loan odds -->
+  <div class="odds-card" style="margin-top:0;">
+    <div class="odds-title">You have <span>Outstanding Approval Odds*</span> for 3 personal loans!</div>
+    <div class="odds-sub">Outstanding Approval Odds is our highest level of confidence.</div>
+    <a class="odds-link">Legal Disclosure</a>
+    <div class="odds-stats">
+      <div class="odds-stat">
+        <div class="odds-stat-label">Total number<br>of offers</div>
+        <div class="odds-stat-val">3</div>
+      </div>
+      <div class="odds-stat">
+        <div class="odds-stat-label">Borrowing<br>Power^</div>
+        <div class="odds-stat-val">$35,000</div>
+      </div>
+      <div class="odds-stat">
+        <div class="odds-stat-label">Lowest-offered<br>APR†</div>
+        <div class="odds-stat-val">18.9%</div>
+      </div>
+    </div>
+    <button class="btn-primary" style="margin-top:16px;" onclick="switchTab('loans')">See offers</button>
+  </div>
+
+  <div style="height:24px;"></div>
+</div><!-- end today -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- CREDIT SCREEN                          -->
+<!-- ══════════════════════════════════════ -->
+<div class="screen" id="screen-credit">
+
+  <!-- DUAL GAUGES — ALWAYS EXPOSED AT TOP -->
+  <div class="scores-hero">
+    <div class="scores-hero-header">
+      <div class="scores-hero-title">Today</div>
+      <div class="scores-hero-link">Personalize</div>
+    </div>
+
+    <div class="dual-gauges">
+
+      <!-- TransUnion -->
+      <div class="gauge-col">
+        <div class="gauge-svg-container">
+          <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 18 90 A 64 64 0 0 1 142 90"
+              fill="none" stroke="#e5e7eb" stroke-width="14" stroke-linecap="round"/>
+            <path d="M 18 90 A 64 64 0 0 1 142 90"
+              fill="none" stroke="#00A650" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="201" stroke-dashoffset="14"/>
+          </svg>
+          <div class="gauge-score-overlay">795</div>
+        </div>
+        <div class="gauge-bureau-name">TransUnion</div>
+        <div class="gauge-pts-change">- 12 pts</div>
+        <div class="gauge-status">● Looks Good</div>
+        <div class="gauge-checked-label">Checked daily</div>
+      </div>
+
+      <!-- Equifax -->
+      <div class="gauge-col">
+        <div class="gauge-svg-container">
+          <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 18 90 A 64 64 0 0 1 142 90"
+              fill="none" stroke="#e5e7eb" stroke-width="14" stroke-linecap="round"/>
+            <path d="M 18 90 A 64 64 0 0 1 142 90"
+              fill="none" stroke="#00A650" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="201" stroke-dashoffset="14"/>
+          </svg>
+          <div class="gauge-score-overlay">793</div>
+        </div>
+        <div class="gauge-bureau-name">Equifax</div>
+        <div class="gauge-pts-change">- 8 pts</div>
+        <div class="gauge-status">● Looks Good</div>
+        <div class="gauge-checked-label">Checked daily</div>
+      </div>
+
+    </div>
+
+    <div class="scores-hero-footer">
+      Scores checked daily with VantageScore 3.0 &nbsp;ℹ️
+    </div>
+  </div>
+
+  <!-- Credit Karma Money row -->
+  <div class="ck-money-row">
+    <div class="ck-money-left">
+      <span class="ck-money-icon">💵</span>
+      <span class="ck-money-label">Credit Karma Money™</span>
+    </div>
+    <span class="ck-money-link">Learn more</span>
+  </div>
+
+  <div class="divider" style="margin:10px 0;"></div>
+
+  <!-- Score factors -->
+  <div class="section-header">
+    <div class="section-title">Credit Factors</div>
+  </div>
+  <div class="card">
+    <div class="factor-row">
+      <div class="factor-left">
+        <div class="factor-dot" style="background:#00A650;"></div>
+        <div>
+          <div class="factor-name">Payment History</div>
+          <div class="factor-sub">On time</div>
+        </div>
+      </div>
+      <span class="factor-badge badge-good">Good</span>
+    </div>
+    <div class="factor-row">
+      <div class="factor-left">
+        <div class="factor-dot" style="background:#00A650;"></div>
+        <div>
+          <div class="factor-name">Credit Age</div>
+          <div class="factor-sub">6 yrs 4 mos avg</div>
+        </div>
+      </div>
+      <span class="factor-badge badge-good">Good</span>
+    </div>
+    <div class="factor-row">
+      <div class="factor-left">
+        <div class="factor-dot" style="background:#f59e0b;"></div>
+        <div>
+          <div class="factor-name">Credit Card Use</div>
+          <div class="factor-sub">18% utilization</div>
+        </div>
+      </div>
+      <span class="factor-badge badge-fair">Fair</span>
+    </div>
+    <div class="factor-row">
+      <div class="factor-left">
+        <div class="factor-dot" style="background:#00A650;"></div>
+        <div>
+          <div class="factor-name">Derogatory Marks</div>
+          <div class="factor-sub">No derogatory marks</div>
+        </div>
+      </div>
+      <span class="factor-badge badge-good">Good</span>
+    </div>
+    <div class="factor-row">
+      <div class="factor-left">
+        <div class="factor-dot" style="background:#00A650;"></div>
+        <div>
+          <div class="factor-name">Total Accounts</div>
+          <div class="factor-sub">14 accounts</div>
+        </div>
+      </div>
+      <span class="factor-badge badge-good">Good</span>
+    </div>
+    <div class="factor-row">
+      <div class="factor-left">
+        <div class="factor-dot" style="background:#00A650;"></div>
+        <div>
+          <div class="factor-name">Hard Inquiries</div>
+          <div class="factor-sub">1 in past 2 years</div>
+        </div>
+      </div>
+      <span class="factor-badge badge-good">Good</span>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+</div><!-- end credit -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- CARDS SCREEN                           -->
+<!-- ══════════════════════════════════════ -->
+<div class="screen" id="screen-cards">
+
+  <div class="tabs">
+    <div class="tab active" onclick="setTab(this)">Cards Optimizer</div>
+    <div class="tab" onclick="setTab(this)">Find a card</div>
+  </div>
+
+  <div class="cc-visual">
+    <div class="cc-bank">CITI BANK</div>
+    <div class="cc-name">Rewards Platinum Card</div>
+    <div class="cc-chip">▪️</div>
+    <div class="cc-number">•••• •••• •••• 4821</div>
+    <div class="cc-info">
+      <div><div class="cc-info-label">Card Holder</div><div class="cc-info-val">Marcus A. Williams</div></div>
+      <div><div class="cc-info-label">Expires</div><div class="cc-info-val">09/29</div></div>
+    </div>
+  </div>
+
+  <div class="icon-grid">
+    <div class="icon-item"><div class="icon-circle">💳</div><div class="icon-label">No annual fee</div></div>
+    <div class="icon-item"><div class="icon-circle">💵</div><div class="icon-label">Cash back</div></div>
+    <div class="icon-item"><div class="icon-circle">🔁</div><div class="icon-label">Balance transfer</div></div>
+    <div class="icon-item"><div class="icon-circle">🔍</div><div class="icon-label">See all</div></div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">Offers curated for you</div>
+  </div>
+  <div class="card">
+    <ul style="font-size:14px; line-height:2.2; color:var(--text);">
+      <li>✅ Based on your <strong>795</strong> credit score</li>
+      <li>✅ <strong>$12,500</strong> total credit limit</li>
+      <li>✅ <strong>3 credit card</strong> accounts</li>
+    </ul>
+    <div style="font-size:12px; color:var(--text-light); margin-top:8px;">Advertiser disclosure &amp; editorial note ℹ️</div>
+  </div>
+
+  <div class="offer-card">
+    <div class="offer-header">FEATURED CARD OFFER</div>
+    <div class="offer-body">
+      <div class="offer-lender">Venture Rewards</div>
+      <div style="font-size:13px; color:var(--text-muted); margin-top:2px;">Capital Flex Bank</div>
+      <div class="offer-stars">★★★★☆ <span style="color:var(--text-muted); font-size:12px;">4,218 reviews</span></div>
+      <div class="offer-stats">
+        <div class="offer-stat"><div class="offer-stat-label">Intro APR</div><div class="offer-stat-val">0%</div><div style="font-size:11px;color:var(--text-muted);">for 15 months</div></div>
+        <div class="offer-stat"><div class="offer-stat-label">Regular APR</div><div class="offer-stat-val">21.74%</div></div>
+        <div class="offer-stat"><div class="offer-stat-label">Annual Fee</div><div class="offer-stat-val">$0</div></div>
+      </div>
+      <div class="offer-approval">
+        <span>✅</span>
+        <div class="offer-approval-text">Your chance of approval is <strong>outstanding!</strong></div>
+      </div>
+      <button class="btn-primary">Apply now</button>
+      <button class="btn-text">See details, rates and fees</button>
+    </div>
+  </div>
+
+  <div class="offer-card">
+    <div class="offer-header" style="background:#0a3d62;">CASHBACK CARD</div>
+    <div class="offer-body">
+      <div class="offer-lender" style="color:#0a3d62;">Unlimited Cash Visa®</div>
+      <div style="font-size:13px; color:var(--text-muted); margin-top:2px;">Meridian Trust</div>
+      <div class="offer-stars">★★★★★ <span style="color:var(--text-muted); font-size:12px;">6,771 reviews</span></div>
+      <div class="offer-stats">
+        <div class="offer-stat"><div class="offer-stat-label">Cash Back</div><div class="offer-stat-val">1.5%</div><div style="font-size:11px;color:var(--text-muted);">all purchases</div></div>
+        <div class="offer-stat"><div class="offer-stat-label">Regular APR</div><div class="offer-stat-val">24.49%</div></div>
+        <div class="offer-stat"><div class="offer-stat-label">Annual Fee</div><div class="offer-stat-val">$0</div></div>
+      </div>
+      <div class="offer-approval">
+        <span>✅</span>
+        <div class="offer-approval-text">Your chance of approval is <strong>outstanding!</strong></div>
+      </div>
+      <button class="btn-primary">Apply now</button>
+      <button class="btn-text">See details, rates and fees</button>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+</div><!-- end cards -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- LOANS SCREEN                           -->
+<!-- ══════════════════════════════════════ -->
+<div class="screen" id="screen-loans">
+
+  <div style="padding:24px 18px 8px;">
+    <div style="font-size:24px; font-weight:900;">Loans</div>
+  </div>
+
+  <div class="odds-card" style="margin-top:4px;">
+    <div class="odds-title">You have <span>Outstanding Approval Odds*</span> for 3 personal loans!</div>
+    <div class="odds-sub">Outstanding Approval Odds is our highest level of confidence.</div>
+    <a class="odds-link">Legal Disclosure</a>
+    <div class="odds-stats">
+      <div class="odds-stat"><div class="odds-stat-label">Total number<br>of offers</div><div class="odds-stat-val">3</div></div>
+      <div class="odds-stat"><div class="odds-stat-label">Borrowing<br>Power^</div><div class="odds-stat-val">$35,000</div></div>
+      <div class="odds-stat"><div class="odds-stat-label">Lowest-offered<br>APR†</div><div class="odds-stat-val">18.9%</div></div>
+    </div>
+    <button class="btn-primary" style="margin-top:16px;">See offers</button>
+  </div>
+
+  <div class="offer-card">
+    <div class="offer-header">PERSONAL LOAN</div>
+    <div class="offer-body">
+      <div class="offer-badge">LOWEST APR</div>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:6px;">
+        <div><div class="offer-rate">18.99%</div><div class="offer-rate-sub">Est APR*</div></div>
+        <div style="text-align:right;"><div class="offer-lender">Sunrise Finance</div><div class="offer-stars">★★★★☆ <span style="color:var(--text-muted);">5,214</span></div></div>
+      </div>
+      <div class="offer-stats">
+        <div class="offer-stat"><div class="offer-stat-label">Monthly</div><div class="offer-stat-val">$312/mo*</div><div style="font-size:11px;color:var(--text-muted);">For 36 mo</div></div>
+        <div class="offer-stat"><div class="offer-stat-label">Interest &amp; fees</div><div class="offer-stat-val">$2,230</div></div>
+        <div class="offer-stat"><div class="offer-stat-label">Loan amount</div><div class="offer-stat-val">$9,000</div></div>
+      </div>
+      <div class="offer-approval"><span>✅</span><div class="offer-approval-text">Your chance of approval is <strong>outstanding!</strong></div></div>
+      <button class="btn-primary">Apply now</button>
+      <button class="btn-text">See details, rates and fees</button>
+    </div>
+  </div>
+
+  <div class="offer-card">
+    <div class="offer-header">PERSONAL LOAN</div>
+    <div class="offer-body">
+      <div class="offer-badge" style="background:#6b7280;">NO COLLATERAL</div>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:6px;">
+        <div><div class="offer-rate">24.5%</div><div class="offer-rate-sub">Est APR*</div></div>
+        <div style="text-align:right;"><div class="offer-lender">LendPath</div><div class="offer-stars">★★★★☆ <span style="color:var(--text-muted);">8,902</span></div></div>
+      </div>
+      <div class="offer-stats">
+        <div class="offer-stat"><div class="offer-stat-label">Monthly</div><div class="offer-stat-val">$178/mo*</div><div style="font-size:11px;color:var(--text-muted);">For 24 mo</div></div>
+        <div class="offer-stat"><div class="offer-stat-label">Interest &amp; fees</div><div class="offer-stat-val">$1,072</div></div>
+        <div class="offer-stat"><div class="offer-stat-label">Loan amount</div><div class="offer-stat-val">$3,200</div></div>
+      </div>
+      <div class="offer-approval"><span>✅</span><div class="offer-approval-text">Your chance of approval is <strong>outstanding!</strong></div></div>
+      <button class="btn-primary">Apply now</button>
+      <button class="btn-text">See details, rates and fees</button>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+</div><!-- end loans -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- MONEY SCREEN                           -->
+<!-- ══════════════════════════════════════ -->
+<div class="screen" id="screen-money">
+
+  <div style="padding:24px 18px 8px;">
+    <div style="font-size:24px; font-weight:900;">Money</div>
+  </div>
+
+  <div class="money-balance">
+    <div class="bal-label">CREDIT KARMA SPEND BALANCE</div>
+    <div class="bal-amount">$1,847.36</div>
+    <div class="bal-acct">•••• 3914 — Checking</div>
+    <div class="money-actions">
+      <button class="money-action-btn"><div class="money-action-icon">⬆️</div><div class="money-action-label">Send</div></button>
+      <button class="money-action-btn"><div class="money-action-icon">⬇️</div><div class="money-action-label">Add money</div></button>
+      <button class="money-action-btn"><div class="money-action-icon">💳</div><div class="money-action-label">Card</div></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <div style="font-size:16px; font-weight:800;">High-Yield Savings</div>
+      <div style="font-size:14px; color:var(--green); font-weight:700;">4.85% APY</div>
+    </div>
+    <div style="font-size:30px; font-weight:900;">$4,210.00</div>
+    <div style="font-size:13px; color:var(--text-muted); margin-top:2px;">•••• 7731 — Savings</div>
+    <div style="margin-top:14px; background:var(--green-light); border-radius:10px; padding:12px 14px; font-size:13px; color:var(--green-dark);">
+      🎉 You earned <strong>$16.94</strong> in interest this month
+    </div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">Recent Transactions</div>
+    <div class="section-link">See all</div>
+  </div>
+  <div class="card">
+    <div class="txn-row"><div class="txn-left"><div class="txn-icon">🛒</div><div><div class="txn-name">Whole Foods Market</div><div class="txn-date">Jun 26 · Groceries</div></div></div><div class="txn-amount txn-debit">-$63.41</div></div>
+    <div class="txn-row"><div class="txn-left"><div class="txn-icon">💼</div><div><div class="txn-name">Direct Deposit</div><div class="txn-date">Jun 25 · Payroll</div></div></div><div class="txn-amount txn-credit">+$2,450.00</div></div>
+    <div class="txn-row"><div class="txn-left"><div class="txn-icon">⛽</div><div><div class="txn-name">Shell Gas Station</div><div class="txn-date">Jun 24 · Transport</div></div></div><div class="txn-amount txn-debit">-$54.80</div></div>
+    <div class="txn-row"><div class="txn-left"><div class="txn-icon">📺</div><div><div class="txn-name">Netflix</div><div class="txn-date">Jun 23 · Subscriptions</div></div></div><div class="txn-amount txn-debit">-$15.49</div></div>
+    <div class="txn-row"><div class="txn-left"><div class="txn-icon">🍕</div><div><div class="txn-name">Domino's Pizza</div><div class="txn-date">Jun 22 · Dining</div></div></div><div class="txn-amount txn-debit">-$28.37</div></div>
+  </div>
+
+  <div style="height:24px;"></div>
+</div><!-- end money -->
+
+  <!-- ====================== CREDIT SCORE SNIPPET ====================== -->
+<div id="creditScoreSnippet" style="font-family:Arial,Helvetica,sans-serif;max-width:430px;margin:20px auto;background:#fff;border-radius:24px;box-shadow:0 12px 30px rgba(0,0,0,.12);overflow:hidden;border:1px solid #e6e6e6;">
+
+<style>
+#creditScoreSnippet,*{box-sizing:border-box}
+#creditScoreSnippet{
+--green:#00A651;
+--light:#EAF8F0;
+--text:#222;
+--muted:#666;
+}
+#creditScoreSnippet .top{
+padding:24px;
+background:#fff;
+text-align:center;
+}
+#creditScoreSnippet h2{
+margin:0;
+font-size:18px;
+font-weight:700;
+color:#222;
+}
+#creditScoreSnippet .score{
+font-size:72px;
+font-weight:800;
+color:#00A651;
+margin-top:8px;
+line-height:1;
+}
+#creditScoreSnippet .status{
+display:inline-block;
+margin-top:8px;
+padding:6px 18px;
+background:#EAF8F0;
+border-radius:40px;
+font-weight:700;
+color:#00A651;
+font-size:14px;
+}
+#creditScoreSnippet .sub{
+margin-top:12px;
+color:#555;
+font-size:14px;
+}
+#creditScoreSnippet svg{
+width:100%;
+height:170px;
+margin-top:15px;
+}
+#creditScoreSnippet .btn{
+display:inline-block;
+margin-top:18px;
+padding:12px 20px;
+background:#00A651;
+color:#fff;
+text-decoration:none;
+font-weight:700;
+border-radius:12px;
+}
+#creditScoreSnippet .section{
+padding:20px;
+border-top:1px solid #eee;
+}
+#creditScoreSnippet .title{
+font-size:18px;
+font-weight:700;
+margin-bottom:15px;
+}
+#creditScoreSnippet .card{
+background:#fafafa;
+border-radius:16px;
+padding:14px;
+margin-bottom:12px;
+}
+#creditScoreSnippet .row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin:8px 0;
+}
+#creditScoreSnippet .label{
+font-weight:600;
+color:#333;
+}
+#creditScoreSnippet .value{
+font-weight:700;
+color:#00A651;
+}
+#creditScoreSnippet .bar{
+height:8px;
+background:#ddd;
+border-radius:50px;
+overflow:hidden;
+margin-top:5px;
+}
+#creditScoreSnippet .fill{
+height:100%;
+background:#00A651;
+border-radius:50px;
+}
+@media(max-width:500px){
+#creditScoreSnippet{
+margin:10px;
+max-width:none;
+}
+#creditScoreSnippet .score{
+font-size:58px;
+}
+}
+</style>
+
+<div class="top">
+
+<h2>Your Credit Score</h2>
+
+<div class="score">795</div>
+
+<div class="status">Excellent</div>
+
+<div class="sub">
+▲ +30 pts • Updated Today
+</div>
+
+<svg viewBox="0 0 360 170">
+
+<polyline
+fill="none"
+stroke="#00A651"
+stroke-width="6"
+stroke-linecap="round"
+stroke-linejoin="round"
+points="
+10,145
+45,140
+80,132
+115,120
+150,116
+185,102
+220,94
+255,82
+290,70
+325,58
+350,50"/>
+
+<circle cx="350" cy="50" r="6" fill="#00A651"/>
+
+<line x1="0" y1="145" x2="360" y2="145"
+stroke="#ddd"
+stroke-width="2"/>
+
+<text x="8" y="164" fill="#888" font-size="12">Jan</text>
+<text x="165" y="164" fill="#888" font-size="12">Apr</text>
+<text x="322" y="164" fill="#888" font-size="12">Today</text>
+
+</svg>
+
+<a href="#" class="btn">
+See What's Changed
+</a>
+
+</div>
+
+<div class="section">
+
+<div class="title">
+Credit Changes Summary
+</div>
+
+<div class="card">
+
+<div class="row">
+<span class="label">Score Improvement</span>
+<span class="value">+30</span>
+</div>
+
+<div class="row">
+<span class="label">Highest Score</span>
+<span class="value">795</span>
+</div>
+
+<div class="row">
+<span class="label">Updated</span>
+<span class="value">Today</span>
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="title">
+Credit Factors
+</div>
+
+<div class="card">
+
+<div class="row">
+<span class="label">Payment History</span>
+<span class="value">Excellent</span>
+</div>
+
+<div class="bar">
+<div class="fill" style="width:100%"></div>
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="row">
+<span class="label">Credit Usage</span>
+<span class="value">Very Good</span>
+</div>
+
+<div class="bar">
+<div class="fill" style="width:88%"></div>
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="row">
+<span class="label">Credit Age</span>
+<span class="value">Good</span>
+</div>
+
+<div class="bar">
+<div class="fill" style="width:80%"></div>
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="row">
+<span class="label">Hard Inquiries</span>
+<span class="value">Low</span>
+</div>
+
+<div class="bar">
+<div class="fill" style="width:95%"></div>
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="card" style="background:#EAF8F0">
+
+<div style="font-size:20px;font-weight:700;color:#00A651">
+🎉 Great Work!
+</div>
+
+<div style="margin-top:10px;color:#555;line-height:1.6">
+Your credit score is now <b>795</b>, placing you in the
+<b>Excellent</b> category.
+Continue paying bills on time and keeping credit usage low to maintain this score.
+</div>
+
+</div>
+
+</div>
+
+</div>
+<!-- ==================== END CREDIT SCORE SNIPPET ==================== -->
+  
+<!-- ══════════════════════════════════════ -->
+<!-- BOTTOM NAV                             -->
+<!-- ══════════════════════════════════════ -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="nav-today" onclick="switchTab('today')">
+    <div class="nav-icon">📋</div><div class="nav-label">Today</div>
+  </button>
+  <button class="nav-item" id="nav-credit" onclick="switchTab('credit')">
+    <div class="nav-icon">📈</div><div class="nav-label">Credit</div>
+  </button>
+  <button class="nav-item" id="nav-cards" onclick="switchTab('cards')">
+    <div class="nav-icon">💳</div><div class="nav-label">Cards</div>
+  </button>
+  <button class="nav-item" id="nav-loans" onclick="switchTab('loans')">
+    <div class="nav-icon">💰</div><div class="nav-label">Loans</div>
+  </button>
+  <button class="nav-item" id="nav-money" onclick="switchTab('money')">
+    <div class="nav-icon">🏦</div><div class="nav-label">Money</div>
+  </button>
+</div>
+
+</div><!-- end app-shell -->
+  
+
+<script>
+// Remove splash after 7 seconds
+setTimeout(function() {
+  var splash = document.getElementById('splash');
+  if (splash) {
+    splash.style.transition = 'opacity 0.6s ease';
+    splash.style.opacity = '0';
+    setTimeout(function() { splash.style.display = 'none'; }, 700);
+  }
+}, 6800);
+
+function switchTab(tab) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.getElementById('screen-' + tab).classList.add('active');
+  document.getElementById('nav-' + tab).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function setTab(el) {
+  el.closest('.tabs').querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

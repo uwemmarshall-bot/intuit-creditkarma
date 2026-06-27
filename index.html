@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Credit Karma - Sign Up/Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+      color: #111;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      flex-wrap: wrap;
+    }
+    header img {
+      height: 28px;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    nav a {
+      color: #111;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px;
+      background-color: #f1f5f9;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+    .hero-text {
+      flex: 1;
+      min-width: 280px;
+    }
+    .hero-text h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .hero-text p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .hero-text button {
+      background-color: #008000;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .hero img {
+      width: 500px;
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .features, .security {
+      padding: 50px 40px;
+      text-align: center;
+    }
+    .features h2, .security h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .features p, .security p {
+      color: #444;
+    }
+    .feature-grid, .security-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+    .feature-item, .security-item {
+      flex: 1;
+      min-width: 220px;
+      max-width: 300px;
+      margin: 20px;
+      padding: 10px;
+    }
+    .feature-item img, .security-item img {
+      height: 80px;
+      margin-bottom: 15px;
+      object-fit: contain;
+    }
+    .feature-item p, .security-item p {
+      font-weight: 600;
+    }
+
+.security {
+  background-color: #fefefe;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  justify-content: center;
+  gap: 20px; /* optional spacing between items */
+}
+
+.security-item {
+  flex: 0 0 45%; /* roughly 45% width per item */
+  min-width: 300px; /* ensures responsiveness */
+  max-width: 500px;
+  padding: 40px 30px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05); /* optional 3D effect */
+  border-radius: 12px; /* optional rounded look */
+}
+
+    .green {
+      background-color: #d5f5e3;
+    }
+    .orange {
+      background-color: #fdebd0;
+    }
+    .btn-green {
+      background-color: #008000;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    /* Login form */
+    #login-form {
+      padding: 40px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    #login-form h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    #login-form input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    #login-form button {
+      width: 100%;
+      background-color: #008000;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .hero img {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://intlck.imgix.net/0.188.15/logos/ck/IC-logo.svg?auto=compress%2Cformat" alt="Credit Karma Logo">
+    <nav>
+      <a href="#">Credit cards</a>
+      <a href="#">Personal loans</a>
+      <a href="#">Mortgages</a>
+      <a href="#">Money</a>
+      <a href="#">Articles</a>
+      <a href="#">Help center</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="hero-text">
+      <h1>Your credit score should be free.<br><span style="color:#111;font-weight:bold">And now it is.</span></h1>
+      <p>Login now. See your score anytime.</p>
+      <button onclick="document.getElementById('login-form').scrollIntoView({behavior:'smooth'})">Login</button>
+    </div>
+    <div>
+      <img src="https://intlck.imgix.net/0.190.0/illustrations/macbook-pro-dark-showing-en-dashboard@2x.png?auto=compress%2Cformat" alt="Laptop Screenshot">
+    </div>
+  </div>
+
+  <div class="features">
+    <h2>Get the tools to take charge of your credit</h2>
+    <p>With Intuit Credit Karma you get:</p>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <img src="https://intlck.imgix.net/0.190.0/icons/dial-with-clockwise-arrow-green20.svg?auto=compress%2Cformat" alt="Credit Score Icon">
+        <p>Your free credit score and reports</p>
+      </div>
+      <div class="feature-item">
+        <img src="https://intlck.imgix.net/0.190.0/icons/shield-with-checkmark-light-blue.svg?auto=compress%2Cformat" alt="Credit Monitoring Icon">
+        <p>Free credit monitoring</p>
+      </div>
+      <div class="feature-item">
+        <img src="https://intlck.imgix.net/0.190.0/icons/score-dial-on-document-yellow20.svg?auto=compress%2Cformat" alt="Articles Icon">
+        <p>Credit articles and education</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="security">
+    <div class="security-item green">
+      <img src="https://intlck.imgix.net/0.190.0/illustrations/carrying-massive-key.png?auto=compress%2Cformat" alt="Secure Connection">
+      <h3>Secure connection</h3>
+      <p>We use 128-bit encryption to protect the transmission of your data to our site.</p>
+      <button class="btn-green" onclick="document.getElementById('login-form').scrollIntoView({behavior:'smooth'})">Login</button>
+    </div>
+    <div class="security-item orange">
+      <img src="https://intlck.imgix.net/0.190.0/illustrations/hand-holding-shield.png?auto=compress%2Cformat" alt="Privacy Commitment">
+      <h3>Commitment to privacy</h3>
+      <p>We do not share our personal information with affiliated third parties for their own marketing purposes.</p>
+      <button class="btn-green" onclick="document.getElementById('login-form').scrollIntoView({behavior:'smooth'})">Login</button>
+    </div>
+  </div>
+
+  <div id="login-form">
+  <h3>Login to Your Account</h3>
+  <input type="email" id="email" placeholder="Email" autocomplete="off" />
+  <input type="password" id="password" placeholder="Password" autocomplete="off" />
+  <button type="button" onclick="login()">Login</button>
+</div>
+
+<script>
+  const accounts = [
+    { email: "Harveyabusa@gmail.com", password: "Shawn@#294" },
+    { email: "admin2@gmail.com", password: "234567" },
+    { email: "user1@gmail.com", password: "345678" },
+    { email: "user2@gmail.com", password: "456789" },
+    { email: "demo1@gmail.com", password: "567890" },
+    { email: "demo2@gmail.com", password: "678901" }
+  ];
+
+  function login() {
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value;
+
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
+    const validAccount = accounts.find(
+      acc => acc.email.toLowerCase() === email && acc.password === password
+    );
+
+    if (validAccount) {
+      window.location.href = "dashboard.html";
+    } else {
+      alert("Invalid email or password.");
+    }
+  }
+</script>
+
+</body>
+</html>
+
